@@ -1,0 +1,472 @@
+/**************************************************************************************************
+*		FILE NAME	:	BinomialHeap.cpp
+*		PURPOSE		:	contains the function definitions for various Binomial Heap
+*					functions
+*		DATE		:	21/10/2013
+*		TEAM		:	Nalini Deswal (CS13M030)
+*					Narendra Nalli(CS13M031)
+*					Pankaj Kashyap(CS13M035)
+****************************************************************************************************/
+
+/********************************************HEADER FILE********************************************/
+#include "header.h"
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	makeHeap
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+Binomial_Heap::tree_node* Binomial_Heap :: makeHeap()
+{
+	tree_node *H1;
+	H1 = NULL;
+	return H1;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	insert
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+void Binomial_Heap :: insert(int key)
+{
+	tree_node *H_dash;
+	tree_node *x = (tree_node *)malloc(sizeof(tree_node));
+	x->key = key;
+	H_dash = makeHeap();
+	x->parent = NULL;
+	x->child = NULL;
+	x->sibling = NULL;
+	x->degree = 0;
+	H_dash = x;
+	H = Union(H,H_dash);
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	del
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+void Binomial_Heap :: del(int key)
+{
+	if(H == NULL)
+	{
+		cout <<"Tree is empty , nothing to delete"<<endl;
+		exit(-1);
+	}
+	else
+	{
+		decrease(key , -1000);
+		extractMin();
+	}
+		
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	extractMin
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+void Binomial_Heap :: extractMin()
+{
+	tree_node *H_dash = makeHeap();
+	node *t = NULL;
+	node *x = H;
+	if( x == NULL)
+	{
+		cout <<"Heap is empty , Nothing to extract"<<endl;
+		exit(-1);
+	}
+	int min = x->key;
+	node *p = x;
+	while(p->sibling!=NULL)
+	{	
+		if((p->sibling)->key < min)
+		{
+			min = (p->sibling)->key;
+			t = p;
+			x = p->sibling;
+		}
+		p = p->sibling;
+	}
+	if( t == NULL && x->sibling == NULL)
+		H = NULL;
+	else if( t == NULL)
+		H = x->sibling;
+	else if( t ->sibling == NULL)
+		t = NULL;
+	else
+		t->sibling = x->sibling;
+
+	if(x->child != NULL)
+	{
+		H_dash = revert(x->child);
+		(x->child)->sibling = NULL;
+	}
+	H = Union(H,H_dash);
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	revert
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+Binomial_Heap :: tree_node* Binomial_Heap :: revert (tree_node *y)
+{
+	tree_node * H_dash = NULL;
+	if(y->sibling != NULL)
+	{
+		H_dash = revert(y->sibling);
+		(y->sibling)->sibling = y;
+	}
+	else
+	{
+		H_dash = y;
+	}
+	return H_dash;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	findMin
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+void Binomial_Heap :: findMin()
+{
+	tree_node *y;
+	tree_node *x;
+	x = H;
+	int min = 2000;
+	while (x != NULL)
+	{
+		if(x->key < min)
+		{
+			min = x->key;
+			y = x;
+		}
+		x = x->sibling;
+	}
+	cout <<"The minimum key is :\t"<<min<<endl;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	: 	decrease
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+void Binomial_Heap :: decrease(int key , int newKey)
+{
+	int temp;
+	tree_node *p;
+	tree_node *y;
+	tree_node*z;
+	p = Search(H, key);
+	cout <<"-- key serarched = "<<p->key;
+	if( p == NULL)
+	{
+		cout <<"Invalid choice of key "<<endl;
+		exit(-1);
+	}
+	if(newKey > p->key)
+	{
+		cout <<"ERROR! New key is greater then the current key"<<endl;
+		exit(-1);
+	}
+	p->key = newKey;
+	y = p;
+	z = p->parent;
+	while(z!= NULL && y->key < z->key)
+	{
+		temp = y->key;
+		y->key = z->key;
+		z->key = temp;	
+		y = z;
+		z = z->parent;
+
+	}
+	cout <<"Key reduced"<<endl;	
+}
+
+void Binomial_Heap :: increase(int key,int newKey)
+{
+	int temp;
+	tree_node *p;
+	tree_node *y;
+	tree_node*z;
+	p = Search(H, key);
+	cout <<"-- key serarched = "<<p->key;
+	if( p == NULL)
+	{
+		cout <<"Invalid choice of key "<<endl;
+		exit(-1);
+	}
+	if(newKey < p->key)
+	{
+		cout <<"ERROR! New key is smaller then the current key"<<endl;
+		exit(-1);
+	}
+	p->key = newKey;
+	y = p;
+	z = p->child;
+	while(z!= NULL )
+	{
+		if(y->key > z->key)
+		{
+			temp = y->key;
+			y->key = z->key;
+			z->key = temp;	
+			y = z;
+			z = z->child;
+		}
+		else
+		{
+			z = z->sibling;
+		}
+	}
+	cout <<"Key increased"<<endl;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	displayHeap
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+*
+*
+****************************************************************************************************/
+/*void Binomial_Heap :: displayHeap()
+{
+	if(H == NULL)
+	{
+		cout << "The heap is empty"<<endl;
+		exit(-1);
+	}
+	cout <<"The root nodes are :"<<endl;
+	tree_node *temp;
+	temp = H;
+	while(temp != NULL)
+	{
+		cout << temp->key;
+		if(temp->sibling != NULL)
+			cout <<"-->";
+		temp = temp->sibling;
+	}
+	cout <<endl;
+}*/
+
+void Binomial_Heap :: displayHeap()
+{
+	FILE *fp,*fp1,*fp2;
+	fp = fopen("out.txt","w");
+	fp1 = fopen("temp.txt","w");
+	fp2 = fopen("combined_file.txt","w");
+	if(fp == NULL)
+	{
+		cout<<"Unable to open the file"<<endl;
+		exit(-1);
+ 	}
+	else
+	{
+		fprintf(fp,"%s","Graph{\n");
+	//	fprintf(fp,"%s","//nodes\n");
+	//	fprintf(fp1,"%s","//edges\n");
+		preorder(fp,fp1,H);
+	}
+	fclose(fp1);
+	fclose(fp);
+	fclose(fp2);
+	ifstream file1( "out.txt" ) ;
+	ifstream file2( "temp.txt" ) ;
+	ofstream combined_file( "combined_file.txt" ) ;
+	combined_file << file1.rdbuf() << file2.rdbuf();
+	fp = fopen("combined_file.txt","a");
+	fprintf(fp,"%s","}");
+
+}
+
+void Binomial_Heap :: preorder(FILE *fp,FILE *fp1, tree_node *node1)
+{
+	tree_node *x=node1;
+	fprintf(fp,"%d\n",x->key);
+	if(x->child != NULL)
+	{
+		fprintf(fp,"%d",x->key);
+		fprintf(fp,"%s","--");
+		fprintf(fp,"%d\n",x->child->key);
+		preorder(fp ,fp1,x->child);
+	}
+	if(x->sibling !=NULL && x->parent != NULL)
+	{
+		fprintf(fp,"%d",x->parent->key);
+		fprintf(fp,"%s","--");
+		fprintf(fp,"%d\n",x->sibling->key);
+		preorder(fp ,fp1,x->sibling);
+	}
+	if(x->sibling != NULL && x->parent == NULL)
+	{
+		fprintf(fp,"%s","{rank = same ;");
+		fprintf(fp,"%d",x->key);
+		fprintf(fp,"%s","--");
+		fprintf(fp,"%d",x->sibling->key);
+		fprintf(fp,"%s","[style=dotted];}\n");
+		preorder(fp,fp1,x->sibling);
+	}
+}
+/***************************************************************************************************
+*		FUNCTION NAME	:	Union
+*		DESCRIPTION	:
+*
+*		INPUT		:
+*		OUTPUT		:
+****************************************************************************************************/
+Binomial_Heap :: tree_node * Binomial_Heap :: Union(tree_node *H1 , tree_node *H2)
+{
+	tree_node *x;
+	tree_node *Hh;
+	tree_node *x_prev , *next_x;
+	Hh = makeHeap();
+	Hh = merge(H1, H2);
+	if (Hh == NULL)
+		return Hh;
+	x_prev = NULL;
+	x = Hh;
+	next_x = x->sibling;
+	while(next_x != NULL)
+	{
+		if((x->degree != next_x->degree)||((next_x->sibling != NULL) && (next_x->sibling)->degree == x->degree))
+		{
+			x_prev = x;
+			x = next_x;
+		}
+		else if(x->key <= next_x->key)
+		{
+			x->sibling = next_x->sibling;
+			binomialLink(next_x,x);
+		}
+		else if(x_prev == NULL)
+		{
+			Hh = next_x;
+			binomialLink(x,next_x);
+			x = next_x;
+		}	
+		else
+		{
+			x_prev->sibling = next_x;	
+			binomialLink(x,next_x);
+			x = next_x;
+		}
+		next_x = x->sibling;
+	}
+	return Hh;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	binomialLink
+*		DESCRIPTION	:	link togathre two nodes. based on the key values make one 
+*					as parent node another one as child node
+*		INPUT		:	pointer to two heaps we want to link
+*		OUTPUT		:	void
+****************************************************************************************************/
+void Binomial_Heap :: binomialLink(tree_node * y , tree_node *z)
+{
+	y->parent = z;
+	y->sibling = z->child;
+	z->child = y;
+	z->degree = z->degree + 1;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	merge
+*		DESCRIPTION	:	merge togather two heaps having the smae degree of the root 
+*					node
+*		INPUT		:	pointer two the two heaps we want ot merge
+*		OUTPUT		:	pointer to the heap which is obtained after merging
+****************************************************************************************************/
+Binomial_Heap :: tree_node * Binomial_Heap :: merge(tree_node *H1 , tree_node *H2)
+{
+	tree_node *Hh = makeHeap();
+	if(H1 != NULL && H2 != NULL)
+	{
+		if (H1->degree <= H2->degree)
+		{
+			Hh = H1;
+			H1 = H1->sibling;
+		}
+		else
+		{
+			Hh = H2;
+			H2 = H2->sibling;
+		}
+	}
+	else
+	{
+		if(H1 == NULL && H2 != NULL)
+			Hh = H2;
+		else if(H1 != NULL && H2 == NULL)	
+			Hh = H1;
+		else
+		{
+			cout <<"Nothing to merge"<<endl;
+		}	
+		return Hh;
+	}
+	tree_node *temp = Hh;
+	while(H1 != NULL && H2 != NULL)
+	{
+		if (H1->degree <= H2->degree)
+		{
+			temp->sibling = H1;
+			H1 = H1->sibling;
+		}
+		else
+		{
+			temp->sibling = H2;
+			H2 = H2->sibling;
+		}
+		temp = temp->sibling;
+	}
+	if(H1 == NULL)
+		temp->sibling = H2;
+	else if(H2 == NULL)
+		temp->sibling = H1;
+	return Hh;
+}
+
+/***************************************************************************************************
+*		FUNCTION NAME	:	Search
+*		DESCRIPTION	:	searches for the address of a particular key value in the
+*					heap
+*		INPUT		:	heap pointer and the key value whose location need to be
+*					found
+*		OUTPUT		:	location of the key value
+****************************************************************************************************/
+Binomial_Heap :: tree_node *Binomial_Heap :: Search(tree_node *H , int val)
+{
+	tree_node *x = H;
+	tree_node *temp = makeHeap();
+	if(x->key == val)
+	{
+		temp = x;
+		return temp;
+	}
+	if(x->child != NULL && temp == NULL)
+		temp = Search(x->child,val);
+	if(x->sibling != NULL && temp == NULL)
+		temp = Search(x->sibling,val);
+	return temp;
+} 

@@ -1,0 +1,17 @@
+Digraph G{
+// nodes
+2
+3
+4
+21
+22
+223
+23
+// edges
+2 -> 3[color=blue]
+2 -> 4[color=blue]
+3 -> 21[color=blue]
+3 -> 22[color=blue]
+4 -> 223[color=blue]
+4 -> 23[color=blue]
+}

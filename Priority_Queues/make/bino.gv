@@ -1,0 +1,27 @@
+Digraph{
+2
+21
+34
+555
+34->555[color=blue]
+555->34[color=yellow]
+31
+21->31[color=blue]
+31->21[color=yellow]
+{rank = same ;34->31[style=dotted];}
+21->34[color=blue]
+34->21[color=yellow]
+22
+23
+22->23[color=blue]
+23->22[color=yellow]
+3
+2->3[color=blue]
+3->2[color=yellow]
+{rank = same ;22->3[style=dotted];}
+2->22[color=blue]
+22->2[color=yellow]
+{rank = same ;21->22[style=dotted];}
+2->21[color=blue]
+21->2[color=yellow]
+}

@@ -56,11 +56,11 @@ void Binomial_Heap :: del(int key)
 	if(H == NULL)
 	{
 		cout <<"Tree is empty , nothing to delete"<<endl;
-		exit(-1);
+		return;
 	}
 	else
 	{
-		decrease(key , -1000);
+		decrease(key , INT_MIN);
 		extractMin();
 	}
 		
@@ -80,9 +80,10 @@ void Binomial_Heap :: extractMin()
 	if( x == NULL)
 	{
 		cout <<"Heap is empty , Nothing to extract"<<endl;
-		exit(-1);
+		return;
 	}
 	int min = x->key;
+	cout <<"The minimum key extracted is "<<min<<endl;
 	node *p = x;
 	while(p->sibling!=NULL)
 	{	
@@ -143,7 +144,7 @@ void Binomial_Heap :: findMin()
 	tree_node *y;
 	tree_node *x;
 	x = H;
-	int min = 2000;
+	int min = INT_MAX;
 	while (x != NULL)
 	{
 		if(x->key < min)
@@ -174,7 +175,7 @@ void Binomial_Heap :: decrease(int key , int newKey)
 	if( p == NULL)
 	{
 		cout <<"Invalid choice of key "<<endl;
-		exit(-1);
+		return;
 	}
 	p->key = newKey;
 	y = p;
@@ -200,26 +201,48 @@ void Binomial_Heap :: decrease(int key , int newKey)
 void Binomial_Heap :: increase(int key,int newKey)
 {
 	int temp;
-	tree_node *p;
-	tree_node *y;
-	tree_node*z;
-	p = Search(H, key);
-	cout <<"-- key serarched = "<<p->key;
+	int count = 0;
+	int min = INT_MAX;
+	tree_node *pos = NULL;
+	tree_node *p = NULL;
+	tree_node *y = NULL;
+	tree_node *z = NULL;
+	p = Search(H,key);
 	if( p == NULL)
 	{
 		cout <<"Invalid choice of key "<<endl;
-		exit(-1);
+		return;
 	}
 	p->key = newKey;
 	y = p;
 	z = p->child;
 	while(z!= NULL )
 	{
+		count = 0;
 		if(y->key > z->key)
-		{
+		{	
+			while(z->sibling!=NULL)
+			{
+				count ++;
+				if( z->key < z->sibling->key)
+				{
+					min = z->key;
+					pos = z;
+					z = z->sibling;
+				}
+				else
+				{
+					min = z->sibling->key;
+					pos = z->sibling;
+					z = z->sibling;
+				}
+			}
+			if(z->sibling == NULL && count == 0)
+				pos = z;
 			temp = y->key;
-			y->key = z->key;
-			z->key = temp;	
+			y->key = pos->key;
+			pos->key = temp;
+			z = pos;		
 			y = z;
 			z = z->child;
 		}
@@ -239,20 +262,18 @@ void Binomial_Heap :: increase(int key,int newKey)
 ****************************************************************************************************/
 void Binomial_Heap :: update(int key , int newKey)
 {
-	cout <<"INSIDE UPDATE"<<endl;
 	if(newKey > key)
 	{
-		cout <<"BEFORE INCREASE"<<endl;
 		increase(key,newKey);
 	}
 	else if(newKey < key)
 	{
-		cout <<"BEFORE DECREASE"<<endl;
 		decrease(key,newKey);
 	}
 	else
 	{
 		cout <<"Keys are equal nothing to do !!"<<endl;
+		return;
 	}
 }
 /***************************************************************************************************
@@ -263,7 +284,12 @@ void Binomial_Heap :: update(int key , int newKey)
 ****************************************************************************************************/
 void Binomial_Heap :: displayHeap(char *filename)
 {
-	FILE *fp,*fp1,*fp2;
+	if(H == NULL)
+	{
+		cout <<"Heap is empty nothing to write"<<endl;
+		return;
+	}
+	FILE *fp;
 	fp = fopen(filename,"w");
 	if(fp == NULL)
 	{
@@ -272,7 +298,12 @@ void Binomial_Heap :: displayHeap(char *filename)
  	}
 	else
 	{
-		fprintf(fp,"%s","Graph{\n");
+		fprintf(fp,"%s","Digraph{\n");
+		if( H == NULL)
+		{
+			cout <<"Heap is empty nothing to write to file"<<endl;
+			return;
+		}
 		preorder(fp,H);
 	}
 	fprintf(fp,"%s","}");
@@ -292,26 +323,50 @@ void Binomial_Heap :: preorder(FILE *fp,tree_node *node1)
 	fprintf(fp,"%d\n",x->key);
 	if(x->child != NULL)
 	{
-		fprintf(fp,"%d",x->key);
-		fprintf(fp,"%s","--");
-		fprintf(fp,"%d\n",x->child->key);
 		preorder(fp ,x->child);
+		
+		fprintf(fp,"%d",x->key);
+		fprintf(fp,"%s","->");
+		fprintf(fp,"%d",x->child->key);
+		fprintf(fp,"%s\n","[color=blue]");
+		
+		//Printing parent edge
+		fprintf(fp,"%d",x->child->key);
+		fprintf(fp,"%s","->");
+		fprintf(fp,"%d",x->key);
+		fprintf(fp,"%s\n","[color=yellow]");
 	}
 	if(x->sibling !=NULL && x->parent != NULL)
 	{
-		fprintf(fp,"%d",x->parent->key);
-		fprintf(fp,"%s","--");
-		fprintf(fp,"%d\n",x->sibling->key);
 		preorder(fp ,x->sibling);
+		
+		//child edges
+		fprintf(fp,"%d",x->parent->key);
+		fprintf(fp,"%s","->");
+		fprintf(fp,"%d",x->sibling->key);
+		fprintf(fp,"%s\n","[color=blue]");
+		
+		//parent edges
+		fprintf(fp,"%d",x->sibling->key);
+		fprintf(fp,"%s","->");
+		fprintf(fp,"%d",x->parent->key);
+		fprintf(fp,"%s\n","[color=yellow]");
+		
+		//sibling edges
+		fprintf(fp,"%s","{rank = same ;");
+		fprintf(fp,"%d",x->key);
+		fprintf(fp,"%s","->");
+		fprintf(fp,"%d",x->sibling->key);
+		fprintf(fp,"%s","[style=dotted];}\n");
 	}
 	if(x->sibling != NULL && x->parent == NULL)
 	{
+		preorder(fp,x->sibling);
 		fprintf(fp,"%s","{rank = same ;");
 		fprintf(fp,"%d",x->key);
-		fprintf(fp,"%s","--");
+		fprintf(fp,"%s","->");
 		fprintf(fp,"%d",x->sibling->key);
 		fprintf(fp,"%s","[style=dotted];}\n");
-		preorder(fp,x->sibling);
 	}
 }
 /***************************************************************************************************

@@ -1,0 +1,12 @@
+1. To execute the program run file heap (location : bin folder)
+	heap -Binary	: for binary heap
+	heap -Binomial  : for Binomial heap 
+	heap -Fibonacci : for Fibonacci heap
+2. header.h (location : include folder)
+3. source file (location : src folder)
+4. makefile (location : make folder)
+5. out graphs are in make folder
+   Binary Heap : bina.gv
+   Binomial heap : bino.gv
+   Fibonacci heap : fibo.gv
+ 

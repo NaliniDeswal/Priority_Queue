@@ -19,8 +19,12 @@ int main(int argc , char *argv[])
 	int choice;							//to accept the choice what operation user want to perform 
 	int key ;							// key values you use for performing heap operations	
 	int newKey;
-
+	int size;
+	int disp = 0;
+	int disp1 = 0;
 	char *fileName = (char *)malloc(sizeof(char)*MAX);
+	char gv[4] = ".gv";
+	char dot[5] =".dot";
 	if(2 != argc)							//Checking for correct number of command line arguments
 	{
 		cout <<"\nEnter correct number of command line arguments\n";
@@ -32,18 +36,24 @@ int main(int argc , char *argv[])
 	{
 		heap = new Binomial_Heap();
 	}
-
-	/*if(!strcmp(FIBONACCI,argv[1]))
+	if(!strcmp(FIBONACCI,argv[1]))
 	{
-		Fibonacci_Heap heap = new Fibonacci_Heap();
-	}*/	
+		heap = new Fibonacci_Heap();
+	}
 
 	if(!strcmp(BINARY,argv[1]))
 	{
 		heap = new Binary_Heap();
+	}
+	if(strcmp(BINARY , argv[1]) && strcmp(BINOMIAL , argv[1]) && strcmp(FIBONACCI , argv[1]))
+	{
+		cout <<"Enter correct option -Binary or -Binomial or -Fibonacci"<<endl;
+		return 0;
 	}	
 	do
-	{
+	{	
+		disp = 0;
+		disp1 = 0;
 		cout<<"---------------------------------"<<endl;
 		cout<<"Choose an operation to perform :"<<endl;
 		cout<<"---------------------------------"<<endl;
@@ -72,7 +82,7 @@ int main(int argc , char *argv[])
 				break;
 			case 5 :
 				cout <<"Performing decrease Key "<<endl;
-				cout <<"Enter the key whose value you want to decrease"<<endl;
+				cout <<"Enter the key whose value you want to update"<<endl;
 				cin >>key;
 				cout <<"Enter the new value"<<endl;
 				cin>>newKey;
@@ -81,6 +91,14 @@ int main(int argc , char *argv[])
 			case 6 :
 				cout<<"Enter the name of the file to which you want to write the heap"<<endl;
 				cin >> fileName;
+				size = strlen(fileName);
+				disp = disp + (size-3);
+				disp1 = disp1 + (size-4);
+				if(strcmp((fileName+disp),gv) && strcmp((fileName+disp1),dot))
+				{
+					cout <<"File extension must contain .gv or .dot extension"<<endl;
+					continue;
+				}
 				heap->displayHeap(fileName);
 				break;
 			case 7:

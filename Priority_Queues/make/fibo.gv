@@ -1,0 +1,46 @@
+Digraph G{
+2
+32->32 [color=red style=dotted]
+32->32 [color=red]
+32
+2->32[color=blue]
+32->2[color=yellow]
+222
+444->333 [color=red style=dotted]
+333->444 [color=red]
+333
+444
+555->555 [color=red style=dotted]
+555->555 [color=red]
+555
+444->555[color=blue]
+555->444[color=yellow]
+222->444[color=blue]
+444->222[color=yellow]
+{rank = same ;333->444[style=dotted];}
+444->333
+222->333[color=blue]
+333->222[color=yellow]
+3
+23->111 [color=red style=dotted]
+111->23 [color=red]
+111
+23
+231123->231123 [color=red style=dotted]
+231123->231123 [color=red]
+231123
+23->231123[color=blue]
+231123->23[color=yellow]
+3->23[color=blue]
+23->3[color=yellow]
+{rank = same ;111->23[style=dotted];}
+23->111
+3->111[color=blue]
+111->3[color=yellow]
+{rank = same ;222->3[style=dotted];}
+3->222
+{rank = same ;2->222[style=dotted];}
+222->2
+2->3 [color=red style=dotted]
+3->2 [color=red]
+}

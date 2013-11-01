@@ -14,9 +14,11 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sstream>
 #include <vector>
 #include <fstream>
+#include <climits>
+#include <map>
+#include <queue>
 
 using namespace std;
 
@@ -28,8 +30,6 @@ class p_queue
 		virtual void del(int) = 0;
 		virtual void extractMin() = 0;
 		virtual void findMin() = 0;
-		virtual void decrease(int,int) = 0;
-		virtual void increase(int,int) = 0;
 		virtual void update(int , int) = 0;
 		virtual void displayHeap(char *) = 0;
 };
@@ -56,78 +56,89 @@ class Binomial_Heap : public p_queue
 		H = NULL;
 	}
 
+	void insert(int);
+	void del(int);
+	void extractMin();
+	void findMin();
+	void update(int,int);
+	void displayHeap(char *);
+
+	private:
+	void preorder(FILE * , tree_node *);
+	void increase(int,int);
+	void decrease(int , int );
 	tree_node * makeHeap();
 	tree_node * revert(tree_node *);
 	tree_node * Union(tree_node * , tree_node *);
 	tree_node * merge(tree_node * , tree_node *);
 	tree_node * Search(tree_node * , int);
 	void binomialLink(tree_node * , tree_node *);
-	void insert(int);
-	void del(int);
-	void extractMin();
-	void findMin();
-	void decrease(int , int );
-	void increase(int,int);
-	void update(int,int);
-	void displayHeap(char *);
-	void preorder(FILE * , tree_node *);
-
 };
 
-
-/*class Fibonacci_Heap :: public p_queue
+/***********************************************Fibonacci_Heap Class******************************************/
+class Fibonacci_Heap : public p_queue
 {
+	
+	 public :
+	 
 	struct node
 	{
-		
+		node *left;
+		node *right;
+		node *child;
+		node* parent;
+		int key;
+		int rank;
+		int mark;
 	};
-	void makeHeap();
+	Fibonacci_Heap();
+	
+	typedef struct node tree_node;	
+	map<int, tree_node*> nodes;
+
+	void makeHeap(void);
 	void insert(int);
 	void del(int);
-	void extractMin();
-	void findMin();
-	void decrease(int);
-	void increase(int);
+	void extractMin(void);
+	void findMin(void);
+	void update(int, int);
+	void balanceFH();
+	void showRoot();
+	void preorder(FILE *fp,tree_node *node1);
 	void displayHeap(char *);
-}*/
+
+	tree_node* min;
+	int n;
+
+		
+};
+
 
 /*********************************************Binary_Heap Class*********************************************/
 class Binary_Heap : public p_queue
 {
 	public:
-	struct node 
-	{
-		int data;
-		struct node *left;
-		struct node *right;
-		struct node *parent;
-	};
-	node *head;
-	node *last;
-	node *currLast;
+	vector<int> myvector;
+	int head,last;
 
-	typedef struct node Node;
-	typedef struct node * nPtr;
-
-	Binary_Heap()
-	{
-		head = NULL;
-		last = NULL;
-		currLast = NULL;
-	}
-
-	void insert(int);
-	void del(int);
-	void extractMin();
-	void findMin();
-	void decrease(int,int);
-	void increase(int,int);
-	void update(int,int);
-	void displayHeap(char *);
-	
-	nPtr getFreeNode ();
-	void minHeapify(Binary_Heap::nPtr vio,int ref);
-	int chkRSubT(int);
-	void inorder (Binary_Heap::nPtr ptr);
+	public:
+		Binary_Heap();
+		void insert (int key);
+		void heapify(int,int);
+		void displayHeap(char str[]);
+		void extractMin();
+		int returnMin();
+		void update(int key1, int key2);
+		void del(int key);
+		void findMin();		
+		int find(int key);
+		void makeHeap(); 
+		int recFind (int index, int key);
+		void increaseKey(int key, int diff);
+		void decreaseKey(int key, int diff);
+		int getParent(int index);
+		int getLChild(int index);
+		int getRChild(int index); 
 };
+
 
